@@ -1,0 +1,32 @@
+<assets>
+    <asset>
+        <id>0</id>
+        <DLCType>Backgrounds</DLCType>
+        <name>Dark Background</name>
+        <thumbnail>
+            <alt>Dark Background Thumbnail</alt>
+            <url>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG1.png</url>
+        </thumbnail>
+        <price>200</price>
+    </asset>
+    <asset>
+        <id>1</id>
+        <DLCType>Backgrounds</DLCType>
+        <name>Light Background</name>
+        <thumbnail>
+            <alt>Light Background Thumbnail</alt>
+            <url>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG2.png</url>
+        </thumbnail>
+        <price>200</price>
+    </asset>
+    <asset>
+        <id>2</id>
+        <DLCType>SkinPacks</DLCType>
+        <name>Base Emoji Skin Pack</name>
+        <thumbnail>
+            <alt>Base Emoji Skin Pack Thumbnail</alt>
+            <url>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG2.png</url>
+        </thumbnail>
+        <price>500</price>
+    </asset>
+</assets>
