@@ -5,7 +5,7 @@
         <name>Dark Background</name>
         <thumbnail>
             <alt>Dark Background Thumbnail</alt>
-            <url>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG1.png</url>
+            <url>gs://emojijunkie-c258a.appspot.com/Thumbnails/EmojiJunkieBG1.png</url>
         </thumbnail>
         <price>200</price>
     </asset>
@@ -15,7 +15,7 @@
         <name>Light Background</name>
         <thumbnail>
             <alt>Light Background Thumbnail</alt>
-            <url>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG2.png</url>
+            <url>gs://emojijunkie-c258a.appspot.com/Thumbnails/EmojiJunkieBG2.png</url>
         </thumbnail>
         <price>200</price>
     </asset>
@@ -25,7 +25,7 @@
         <name>Base Emoji Skin Pack</name>
         <thumbnail>
             <alt>Base Emoji Skin Pack Thumbnail</alt>
-            <url>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG2.png</url>
+            <url>gs://emojijunkie-c258a.appspot.com/Thumbnails/EmojiSkinPack.png</url>
         </thumbnail>
         <price>500</price>
     </asset>
