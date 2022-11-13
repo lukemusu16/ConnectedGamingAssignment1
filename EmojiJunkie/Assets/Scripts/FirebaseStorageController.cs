@@ -13,13 +13,13 @@ public class FirebaseStorageController : MonoBehaviour
 {
 
     private FirebaseStorage _firebaseStorageInstance;
-    [SerializeField] private GameObject RawImagePrefab;
+    [SerializeField] private GameObject DLCItemPrefab;
     private GameObject _thumbnailContainer;
-    private List<GameObject> _rawImageList;
+    public List<GameObject> _DLCItemsList;
     private List<AssetData> _assetData;
     public enum DownloadType
     {
-        Thumbnail, Manifest
+        Thumbnail, Manifest, Item
     }
 
     //Singleton
@@ -42,7 +42,7 @@ public class FirebaseStorageController : MonoBehaviour
     private void Start()
     {
         _thumbnailContainer = GameObject.Find("Content");
-        _rawImageList = new List<GameObject>();
+        _DLCItemsList = new List<GameObject>();
         //Download Manifest
         DownloadFileAsync("gs://emojijunkie-c258a.appspot.com/manifest.xml", DownloadType.Manifest);
     }
@@ -76,6 +76,10 @@ public class FirebaseStorageController : MonoBehaviour
                     //Load the manifest
                     StartCoroutine(LoadManifest(fileContents));
                 }
+                else if (dType == DownloadType.Item)
+                { 
+                    
+                }
 
             }
         });
@@ -96,10 +100,11 @@ public class FirebaseStorageController : MonoBehaviour
             string urlStr = elem.Element("thumbnail")?.Element("url")?.Value;
             string priceStr = elem.Element("price")?.Value;
             string dlcTypeStr = elem.Element("DLCType")?.Value;
+            string contentUrlStr = elem.Element("ContentUrl")?.Value;
             float price = (priceStr != null) ? float.Parse(priceStr) : 0f;
             AssetData.CURRENNCY currency = AssetData.CURRENNCY.Emojicoins;
 
-            AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr);
+            AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr);
             _assetData.Add(newAsset);
 
             DownloadFileAsync(newAsset.ThumbnailUrl, DownloadType.Thumbnail);
@@ -111,14 +116,19 @@ public class FirebaseStorageController : MonoBehaviour
     IEnumerator LoadDLCItem(byte[] fileContents)
     {
         // Display the image inside _imagePlaceholder
-        GameObject DLCItem = Instantiate(RawImagePrefab, _thumbnailContainer.transform.position, Quaternion.identity, _thumbnailContainer.transform);
-        DLCItem.name = "DownloadedImage_" + _rawImageList.Count;
+        GameObject DLCItem = Instantiate(DLCItemPrefab, _thumbnailContainer.transform.position, Quaternion.identity, _thumbnailContainer.transform);
+        DLCItem.name = "DownloadedItem_" + _assetData[_DLCItemsList.Count].Id;
         Texture2D tex = new Texture2D(1, 1);
         tex.LoadImage(fileContents);
         DLCItem.GetComponentInChildren<RawImage>().texture = tex;
-        DLCItem.transform.Find("Price").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_rawImageList.Count].Price.ToString();
-        DLCItem.transform.Find("DLCType").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_rawImageList.Count].DLCType.ToString();
-        _rawImageList.Add(DLCItem);
-        yield return null;
+        DLCItem.transform.Find("Price").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Price.ToString();
+        DLCItem.transform.Find("DLCType").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].DLCType.ToString();
+
+        /*DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() => {
+            DownloadFileAsync()
+        });*/
+
+        _DLCItemsList.Add(DLCItem);
+        yield return DLCItem;
     }
 }

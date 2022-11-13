@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 266f8b04c6cff8d4089cbf3a2c8edd27
+  m_SerializeEntries:
+  - m_GUID: 4bd9262669e374942ba47a8a62cf151f
+    m_Address: Assets/Prefabs/EmojiBG1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2d6f6de98d8c7ce4e8c917020891097a
+    m_Address: Assets/Prefabs/EmojiBG2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 658e5a6246a71e744b8b3fa51d381106
+    m_Address: Assets/Prefabs/SwirlParticle.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7edbd18c9fcba354181c8d17e5f8810c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0866a4ede431802419ea9084e41e678f, type: 2}
+    - {fileID: 11400000, guid: 736ec8bcb489fa248a183115fdf27ef6, type: 2}
