@@ -17,7 +17,7 @@ MonoBehaviour:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
   m_OptimizeCatalogSize: 0
-  m_BuildRemoteCatalog: 0
+  m_BuildRemoteCatalog: 1
   m_BundleLocalCatalog: 0
   m_CatalogRequestsTimeout: 0
   m_DisableCatalogUpdateOnStart: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
       - m_Id: 5a2ae81067d90394895cef3dd130dc6e
         m_Value: ServerData/[BuildTarget]
       - m_Id: 80ebb4682732e824595edac73d62ee32
-        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
+        m_Value: gs://emojijunkie-c258a.appspot.com/DLC
     m_ProfileEntryNames:
     - m_Id: c1042108e7bcfb44fbbfa4c39ef69ddb
       m_Name: BuildTarget

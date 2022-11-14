@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Firebase.Extensions;
 using Firebase.Storage;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class StoreManager : MonoBehaviour
 {
@@ -18,15 +19,10 @@ public class StoreManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         fsc = transform.Find("DLC Manager").GetComponent<FirebaseStorageController>();
 
         _thumbnailContainer = GameObject.Find("Content");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void DownloadFileAsync(string url)

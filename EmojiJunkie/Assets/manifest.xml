@@ -7,7 +7,7 @@
             <alt>Dark Background Thumbnail</alt>
             <url>gs://emojijunkie-c258a.appspot.com/Thumbnails/EmojiJunkieBG1.png</url>
         </thumbnail>
-		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG1.png</contentUrl>
+		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/EmojiJunkieBG1.png</contentUrl>
         <price>200</price>
     </asset>
     <asset>
@@ -18,7 +18,7 @@
             <alt>Light Background Thumbnail</alt>
             <url>gs://emojijunkie-c258a.appspot.com/Thumbnails/EmojiJunkieBG2.png</url>
         </thumbnail>
-		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG2.png</contentUrl>
+		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/EmojiJunkieBG2.png</contentUrl>
         <price>200</price>
     </asset>
     <asset>
@@ -29,7 +29,7 @@
             <alt>Base Emoji Skin Pack Thumbnail</alt>
             <url>gs://emojijunkie-c258a.appspot.com/Thumbnails/EmojiSkinPack.png</url>
         </thumbnail>
-		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/SkinPacks/EmojiSkinPack.png</contentUrl>
+		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/EmojiSkinPack.png</contentUrl>
         <price>500</price>
     </asset>
 	<asset>
@@ -40,7 +40,7 @@
 			<alt>Magic Swirl Thumbnail</alt>
 			<url>gs://emojijunkie-c258a.appspot.com/Thumbnails/Swirl.png</url>
 		</thumbnail>
-		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/Backgrounds/EmojiJunkieBG1.png</contentUrl>
+		<contentUrl>gs://emojijunkie-c258a.appspot.com/DLC/EmojiJunkieBG1.png</contentUrl>
 		<price>800</price>
 	</asset>
 </assets>
