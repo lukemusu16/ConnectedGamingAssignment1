@@ -15,7 +15,10 @@ public class SavingSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        generateUserID();
+        setPlayerID();
+        setPrivacyPolicy();
+
+        PlayerPrefs.Save();
     }
 
     // Update is called once per frame
@@ -24,7 +27,7 @@ public class SavingSystem : MonoBehaviour
         
     }
 
-    void generateUserID()
+    string generateUserID()
     {
         string ID = "";
 
@@ -46,7 +49,7 @@ public class SavingSystem : MonoBehaviour
             int ranInt = UnityEngine.Random.Range(0, numbers.Length);
             foreach (char c in numbers)
             {
-                if (CAPS.IndexOf(c) == ranInt)
+                if (numbers.IndexOf(c) == ranInt)
                 {
                     ID += c;
                 }
@@ -58,13 +61,37 @@ public class SavingSystem : MonoBehaviour
             int ranInt = UnityEngine.Random.Range(0, smallCaps.Length);
             foreach (char c in smallCaps)
             {
-                if (CAPS.IndexOf(c) == ranInt)
+                if (smallCaps.IndexOf(c) == ranInt)
                 {
                     ID += c;
                 }
             }
         }
 
-        print(ID);
+        return ID;
+    }
+
+    void setPlayerID()
+    {
+        if (PlayerPrefs.HasKey("playerID"))
+        {
+            PlayerPrefs.SetString("playerID", generateUserID());
+        }
+        else
+        {
+            PlayerPrefs.SetString("playerID", generateUserID());
+        }
+    }
+
+    void setPrivacyPolicy()
+    {
+        if (PlayerPrefs.HasKey("PrivacyPolicy"))
+        {
+            PlayerPrefs.SetInt("PrivacyPolicy", 0);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("PrivacyPolicy", 0);
+        }
     }
 }
