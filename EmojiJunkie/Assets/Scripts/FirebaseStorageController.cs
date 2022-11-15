@@ -22,6 +22,7 @@ public class FirebaseStorageController : MonoBehaviour
         Thumbnail, Manifest, Item
     }
 
+
     //Singleton
     public static FirebaseStorageController Instance
     {
@@ -99,6 +100,7 @@ public class FirebaseStorageController : MonoBehaviour
             string contentUrlStr = elem.Element("ContentUrl")?.Value;
             float price = (priceStr != null) ? float.Parse(priceStr) : 0f;
             AssetData.CURRENNCY currency = AssetData.CURRENNCY.Emojicoins;
+            bool isPurchased = false;
 
             AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr);
             _assetData.Add(newAsset);
@@ -120,7 +122,8 @@ public class FirebaseStorageController : MonoBehaviour
         DLCItem.transform.Find("Price").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Price.ToString();
         DLCItem.transform.Find("DLCType").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].DLCType.ToString();
 
-        /*DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() => {
+        /*DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
+        {
             DownloadFileAsync()
         });*/
 

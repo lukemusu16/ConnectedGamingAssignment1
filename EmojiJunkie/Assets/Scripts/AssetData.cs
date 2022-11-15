@@ -17,6 +17,7 @@ public class AssetData
     private string _contentUrl;
     private float _price;
     private CURRENNCY _currency;
+    private bool _isPurcahsed;
 
     public virtual CURRENNCY Currency
     { get { return _currency; } set { _currency = value; } }
@@ -38,6 +39,9 @@ public class AssetData
 
     public virtual int Id
     { get { return _id; } set { _id = value; } }
+
+    public virtual bool IsPurcahsed
+    { get { return _isPurcahsed; } set { _isPurcahsed = value; } }
 
     public override string ToString()
     {
