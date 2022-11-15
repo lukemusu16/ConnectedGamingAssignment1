@@ -17,14 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 266f8b04c6cff8d4089cbf3a2c8edd27
   m_SerializeEntries:
-  - m_GUID: 4bd9262669e374942ba47a8a62cf151f
-    m_Address: DLC/EmojiBG1.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 2d6f6de98d8c7ce4e8c917020891097a
-    m_Address: DLC/EmojiBG2.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 658e5a6246a71e744b8b3fa51d381106
     m_Address: DLC/SwirlParticle.prefab
     m_ReadOnly: 0

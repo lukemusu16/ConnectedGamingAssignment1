@@ -1,16 +1,22 @@
 using Firebase.Extensions;
 using Firebase.Storage;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class TestAddressables : MonoBehaviour
 {
 
     private FirebaseStorage _firebaseStorageInstance;
+    IProgress<DownloadState> progress;
 
     //private AsyncOperationHandle<GameObject> handle;
 
@@ -23,7 +29,7 @@ public class TestAddressables : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(DownloadCatalog());
+        StartCoroutine(DownloadBundle());
         //DownloadFileAsync("gs://emojijunkie-c258a.appspot.com/DLC/EmojiBG1.prefab");
 /*        handle = Addressables.LoadAsset<GameObject>(address);
         handle.Completed += Handle_Completed;*/
@@ -53,7 +59,7 @@ public class TestAddressables : MonoBehaviour
 
         // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
         const long maxAllowedSize = 1 * 2048 * 2048;
-        storeRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+        storeRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(async task =>
         {
             if (task.IsFaulted || task.IsCanceled)
             {
@@ -69,10 +75,29 @@ public class TestAddressables : MonoBehaviour
         });
     }
 
-    public IEnumerator DownloadCatalog()
+    public IEnumerator DownloadBundle()
     {
+        string localFile = "file://" + Application.streamingAssetsPath + "/bundle.bundle";
+        StorageReference storage = _firebaseStorageInstance.GetReferenceFromUrl("gs://emojijunkie-c258a.appspot.com/DLC/defaultlocalgroup_assets_all_ecbd5d1c653825621ea8d9e3dfb39264.bundle");
+        storage.GetFileAsync(localFile).ContinueWithOnMainThread(task => {
+            if (!task.IsFaulted && !task.IsCanceled)
+            {
+                Debug.Log("File downloaded.");
+                var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "bundle.bundle"));
+                if (myLoadedAssetBundle == null)
+                {
+                    Debug.Log("Failed to load AssetBundle!");
+                    return;
+                }
+                var prefab = myLoadedAssetBundle.LoadAsset<GameObject>("DLC/SwirlParticle.prefab");
+                Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            }
+        });
+        yield return null;
+    }
 
-        AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>("prefab");
-        yield return handle;
+    private IProgress<T> IProgess<T>()
+    {
+        throw new NotImplementedException();
     }
 }

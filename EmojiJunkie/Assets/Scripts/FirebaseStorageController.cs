@@ -76,10 +76,6 @@ public class FirebaseStorageController : MonoBehaviour
                     //Load the manifest
                     StartCoroutine(LoadManifest(fileContents));
                 }
-                else if (dType == DownloadType.Item)
-                { 
-                    
-                }
 
             }
         });
