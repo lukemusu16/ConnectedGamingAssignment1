@@ -8,5 +8,14 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/Welcome_Scene.unity
+    guid: c57f61d0b2d89ca46b1d6952b9f9c619
+  - enabled: 1
+    path: Assets/Scenes/Game_Scene.unity
+    guid: 8c8170a8fab5ce84982b9f7768f0b5c0
+  - enabled: 1
+    path: Assets/Scenes/Store_Scene.unity
+    guid: 8afdfed5b448c5545b6f4a2a8d8c4ede
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 8a4c848378052014f8fe93a491c5c5af, type: 2}

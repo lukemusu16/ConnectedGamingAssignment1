@@ -16,7 +16,7 @@ public class FirebaseStorageController : MonoBehaviour
     [SerializeField] private GameObject DLCItemPrefab;
     private GameObject _thumbnailContainer;
     public List<GameObject> _DLCItemsList;
-    private List<AssetData> _assetData;
+    public List<AssetData> _assetData;
     public enum DownloadType
     {
         Thumbnail, Manifest, Item
@@ -102,7 +102,7 @@ public class FirebaseStorageController : MonoBehaviour
             AssetData.CURRENNCY currency = AssetData.CURRENNCY.Emojicoins;
             bool isPurchased = false;
 
-            AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr);
+            AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr, isPurchased);
             _assetData.Add(newAsset);
 
             DownloadFileAsync(newAsset.ThumbnailUrl, DownloadType.Thumbnail);

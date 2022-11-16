@@ -48,7 +48,7 @@ public class AssetData
         return ($"The asset has the following values: ID:{Id}, NAME:{Name}, URL:{ThumbnailUrl}, PRICE:{Price}, CURRENCY:{Currency.ToString()}");
     }
 
-    public AssetData(int id, string name, string url, float price, CURRENNCY currency, string dlcType, string contentUrl)
+    public AssetData(int id, string name, string url, float price, CURRENNCY currency, string dlcType, string contentUrl, bool isPurchased)
     {
         this.Id = id;
         this.Name = name;
@@ -57,5 +57,6 @@ public class AssetData
         this.Price = price;
         this.Currency = currency;
         this.DLCType = dlcType;
+        this.IsPurcahsed = isPurchased;
     }
 }
