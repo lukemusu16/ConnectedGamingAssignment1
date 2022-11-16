@@ -1,29 +1,63 @@
+using Firebase.Extensions;
+using Firebase.Firestore;
+using Firebase.Storage;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class SavingSystem : MonoBehaviour
 {
 
-    string CAPS = "ABCDEFGHIJKLMNOPQSTUVWXYZ";
-    string numbers = "0123456789";
-    string smallCaps = "abcdefghijklmnpqrstuvwxyz";
+    FirebaseFirestore db;
+    FirebaseStorage _firebaseStorageInstance;
+    string playerId;
+
+
+    public static SavingSystem Instance
+    {
+        get;
+        private set;
+    }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            DontDestroyOnLoad(this);
+            _firebaseStorageInstance = FirebaseStorage.DefaultInstance;
+            db = FirebaseFirestore.DefaultInstance;
+        }
+    }
 
 
     // Start is called before the first frame update
     void Start()
     {
-        setPlayerID();
-        setPrivacyPolicy();
-
-        PlayerPrefs.Save();
-
-        if (PlayerPrefs.HasKey("playerID"))
+        if (GlobalValues.LaunchCheck)
         {
-            print(PlayerPrefs.GetString("playerID"));
+            setPlayerID();
+            setPrivacyPolicy();
+
+            PlayerPrefs.Save();
+
+            if (PlayerPrefs.HasKey("playerID"))
+            {
+                print(PlayerPrefs.GetString("playerID"));
+            }
+            GlobalValues.LaunchCheck = false;
+
+            playerId = PlayerPrefs.GetString("playerID");
+
+            LoadManifestItems("gs://emojijunkie-c258a.appspot.com/manifest.xml");
         }
+        
 
     }
 
@@ -123,5 +157,72 @@ public class SavingSystem : MonoBehaviour
         {
             PlayerPrefs.SetInt("PrivacyPolicy", 0);
         }
+    }
+
+    public void LoadManifestItems(string url)
+    {
+        // Create a storage reference from our storage service
+        StorageReference imageRef =
+            _firebaseStorageInstance.GetReferenceFromUrl(url);
+
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        const long maxAllowedSize = 1 * 2048 * 2048;
+        imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogException(task.Exception);
+                // Uh-oh, an error occurred!
+            }
+            else
+            {
+            
+                byte[] fileContents = task.Result;
+ 
+                DocumentReference docRef = db.Collection("playerData").Document(playerId);
+
+                XDocument manifest = XDocument.Parse(System.Text.Encoding.UTF8.GetString(fileContents));
+                foreach (XElement elem in manifest.Root.Elements())
+                {
+                    print("entered");
+                    //Debug.Log(elem.Element("id")?.Value);
+                    string idStr = elem.Element("id")?.Value;
+                    int id = (idStr != null) ? int.Parse(idStr) : 0;
+                    string nameStr = elem.Element("name")?.Value;
+                    string urlStr = elem.Element("thumbnail")?.Element("url")?.Value;
+                    string priceStr = elem.Element("price")?.Value;
+                    string dlcTypeStr = elem.Element("DLCType")?.Value;
+                    string contentUrlStr = elem.Element("ContentUrl")?.Value;
+                    float price = (priceStr != null) ? float.Parse(priceStr) : 0f;
+                    AssetData.CURRENNCY currency = AssetData.CURRENNCY.Emojicoins;
+                    bool isPurchased = false;
+
+                    AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr, isPurchased);
+                    FirebaseStorageController.Instance._assetData.Add(newAsset);
+
+                    Dictionary<string, object> PurchaseData = new Dictionary<string, object>
+                    {
+                        { "Asset "+FirebaseStorageController.Instance._assetData[id].Id, new Dictionary<string, object>
+                            {
+                                { "AssetID", FirebaseStorageController.Instance._assetData[id].Id},
+                                { "AssetName", FirebaseStorageController.Instance._assetData[id].Name},
+                                { "isPurchase", FirebaseStorageController.Instance._assetData[id].IsPurcahsed},
+                                { "timestamp", DateTime.Now.ToString("dd-MM-yyyy [HH:mm:ss]")}
+                            } 
+                        },
+                    };
+
+                    if (FirebaseStorageController.Instance._assetData[id].Id == 0)
+                    {
+                        docRef.SetAsync(PurchaseData);
+                    }
+                    else
+                    {
+                        docRef.UpdateAsync(PurchaseData);
+                    }
+                    
+                }
+            }
+        });
     }
 }

@@ -44,8 +44,9 @@ public class FirebaseStorageController : MonoBehaviour
     {
         _thumbnailContainer = GameObject.Find("Content");
         _DLCItemsList = new List<GameObject>();
+        _assetData = new List<AssetData>();
         //Download Manifest
-        DownloadFileAsync("gs://emojijunkie-c258a.appspot.com/manifest.xml", DownloadType.Manifest);
+        //DownloadFileAsync("gs://emojijunkie-c258a.appspot.com/manifest.xml", DownloadType.Manifest);
     }
 
     public void DownloadFileAsync(string url, DownloadType dType)
@@ -66,7 +67,7 @@ public class FirebaseStorageController : MonoBehaviour
             else
             {
                 byte[] fileContents = task.Result;
-                Debug.Log($"{imageRef.Name} finished downloading!");
+                //Debug.Log($"{imageRef.Name} finished downloading!");
                 if (dType == DownloadType.Thumbnail)
                 {
                     //Load Image
@@ -86,7 +87,6 @@ public class FirebaseStorageController : MonoBehaviour
     {
         //Converting from byte array to String UTF8
         XDocument manifest = XDocument.Parse(System.Text.Encoding.UTF8.GetString(fileContents));
-        _assetData = new List<AssetData>();
 
         foreach (XElement elem in manifest.Root.Elements())
         {
@@ -115,17 +115,19 @@ public class FirebaseStorageController : MonoBehaviour
     {
         // Display the image inside _imagePlaceholder
         GameObject DLCItem = Instantiate(DLCItemPrefab, _thumbnailContainer.transform.position, Quaternion.identity, _thumbnailContainer.transform);
-        DLCItem.name = "DownloadedItem_" + _assetData[_DLCItemsList.Count].Id;
+        DLCItem.name = _assetData[_DLCItemsList.Count].Id.ToString();
         Texture2D tex = new Texture2D(1, 1);
         tex.LoadImage(fileContents);
         DLCItem.GetComponentInChildren<RawImage>().texture = tex;
         DLCItem.transform.Find("Price").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Price.ToString();
         DLCItem.transform.Find("DLCType").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].DLCType.ToString();
 
-        /*DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
+        DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
         {
-            DownloadFileAsync()
-        });*/
+            print(_assetData[int.Parse(DLCItem.name)].IsPurcahsed);
+            _assetData[int.Parse(DLCItem.name)].IsPurcahsed = true;
+            print(_assetData[int.Parse(DLCItem.name)].IsPurcahsed);
+        });
 
         _DLCItemsList.Add(DLCItem);
         yield return DLCItem;

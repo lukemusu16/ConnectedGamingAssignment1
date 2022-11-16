@@ -45,7 +45,7 @@ public class AssetData
 
     public override string ToString()
     {
-        return ($"The asset has the following values: ID:{Id}, NAME:{Name}, URL:{ThumbnailUrl}, PRICE:{Price}, CURRENCY:{Currency.ToString()}");
+        return ($"The asset has the following values: ID:{Id}, NAME:{Name}, URL:{ThumbnailUrl}, PRICE:{Price}, CURRENCY:{Currency.ToString()}, isPurchased:{IsPurcahsed}");
     }
 
     public AssetData(int id, string name, string url, float price, CURRENNCY currency, string dlcType, string contentUrl, bool isPurchased)
