@@ -8,21 +8,15 @@ using UnityEngine.AddressableAssets;
 
 public class StoreManager : MonoBehaviour
 {
-    private FirebaseStorage _firebaseStorageInstance;
-    private FirebaseStorageController fsc;
-    [SerializeField] private GameObject DLCItemPrefab;
-    private GameObject _thumbnailContainer;
-    private List<GameObject> _DLCItemsList;
-    private List<AssetData> _assetData;
-
-
     // Start is called before the first frame update
     void Start()
     {
-
-        fsc = transform.Find("DLC Manager").GetComponent<FirebaseStorageController>();
-
-        _thumbnailContainer = GameObject.Find("Content");
+        foreach (AssetData asset in FirebaseStorageController.Instance._assetData)
+        {
+            print(asset.ThumbnailUrl);
+            FirebaseStorageController.Instance.DownloadFileAsync(asset.ThumbnailUrl, FirebaseStorageController.DownloadType.Thumbnail);
+        }
+        
     }
 
 

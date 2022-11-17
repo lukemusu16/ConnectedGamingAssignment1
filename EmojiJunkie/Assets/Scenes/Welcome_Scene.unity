@@ -957,7 +957,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57289c3b730e324cb3152c2c8b1413b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DLCItemPrefab: {fileID: 0}
+  DLCItemPrefab: {fileID: 2269997321895674306, guid: 66650aef806424045bcbb9eb0b0d5d43, type: 3}
   _DLCItemsList: []
 --- !u!1 &1596679136
 GameObject:

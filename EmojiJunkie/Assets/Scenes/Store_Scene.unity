@@ -1160,9 +1160,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1615072060}
-  - component: {fileID: 1615072059}
   - component: {fileID: 1615072061}
   - component: {fileID: 1615072062}
+  - component: {fileID: 1615072063}
   m_Layer: 0
   m_Name: DLCManager
   m_TagString: Untagged
@@ -1170,20 +1170,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1615072059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1615072058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d57289c3b730e324cb3152c2c8b1413b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DLCItemPrefab: {fileID: 2269997321895674306, guid: 66650aef806424045bcbb9eb0b0d5d43, type: 3}
-  _DLCItemsList: []
 --- !u!4 &1615072060
 Transform:
   m_ObjectHideFlags: 0
@@ -1221,6 +1207,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a62804e0706c004d8dfe29e833151e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1615072063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615072058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcca307ad7f55284b91db9e977dd2242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1701339951

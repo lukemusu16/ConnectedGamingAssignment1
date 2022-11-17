@@ -13,7 +13,6 @@ public class SavingSystem : MonoBehaviour
 
     FirebaseFirestore db;
     FirebaseStorage _firebaseStorageInstance;
-    string playerId;
 
 
     public static SavingSystem Instance
@@ -30,10 +29,11 @@ public class SavingSystem : MonoBehaviour
         }
         else
         {
-            DontDestroyOnLoad(this);
+            //DontDestroyOnLoad(this);
             _firebaseStorageInstance = FirebaseStorage.DefaultInstance;
             db = FirebaseFirestore.DefaultInstance;
         }
+        Instance = this;
     }
 
 
@@ -53,7 +53,7 @@ public class SavingSystem : MonoBehaviour
             }
             GlobalValues.LaunchCheck = false;
 
-            playerId = PlayerPrefs.GetString("playerID");
+            GlobalValues.PlayerID = PlayerPrefs.GetString("playerID");
 
             LoadManifestItems("gs://emojijunkie-c258a.appspot.com/manifest.xml");
         }
@@ -178,13 +178,10 @@ public class SavingSystem : MonoBehaviour
             {
             
                 byte[] fileContents = task.Result;
- 
-                DocumentReference docRef = db.Collection("playerData").Document(playerId);
 
                 XDocument manifest = XDocument.Parse(System.Text.Encoding.UTF8.GetString(fileContents));
                 foreach (XElement elem in manifest.Root.Elements())
                 {
-                    print("entered");
                     //Debug.Log(elem.Element("id")?.Value);
                     string idStr = elem.Element("id")?.Value;
                     int id = (idStr != null) ? int.Parse(idStr) : 0;
@@ -200,28 +197,19 @@ public class SavingSystem : MonoBehaviour
                     AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr, isPurchased);
                     FirebaseStorageController.Instance._assetData.Add(newAsset);
 
+                    DocumentReference docRef = db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets").Document("Asset " + FirebaseStorageController.Instance._assetData[id].Id);
                     Dictionary<string, object> PurchaseData = new Dictionary<string, object>
                     {
-                        { "Asset "+FirebaseStorageController.Instance._assetData[id].Id, new Dictionary<string, object>
-                            {
-                                { "AssetID", FirebaseStorageController.Instance._assetData[id].Id},
-                                { "AssetName", FirebaseStorageController.Instance._assetData[id].Name},
-                                { "isPurchase", FirebaseStorageController.Instance._assetData[id].IsPurcahsed},
-                                { "timestamp", DateTime.Now.ToString("dd-MM-yyyy [HH:mm:ss]")}
-                            } 
-                        },
+                        { "AssetID", FirebaseStorageController.Instance._assetData[id].Id},
+                        { "AssetName", FirebaseStorageController.Instance._assetData[id].Name},
+                        { "isPurchase", FirebaseStorageController.Instance._assetData[id].IsPurcahsed},
+                        { "timestamp", DateTime.Now.ToString("dd-MM-yyyy [HH:mm:ss]")}
                     };
 
-                    if (FirebaseStorageController.Instance._assetData[id].Id == 0)
-                    {
-                        docRef.SetAsync(PurchaseData);
-                    }
-                    else
-                    {
-                        docRef.UpdateAsync(PurchaseData);
-                    }
+                    docRef.SetAsync(PurchaseData);
                     
                 }
+                print("Data Saved");
             }
         });
     }
