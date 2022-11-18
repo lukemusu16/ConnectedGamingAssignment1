@@ -39,7 +39,7 @@ public class DatabaseManager : MonoBehaviour
             { "timestamp", DateTime.Now.ToString("dd-MM-yyyy [HH:mm:ss]")},
         };
 
-        print(docRef);
+        
         docRef.SetAsync(buttonClicks);
 
     }

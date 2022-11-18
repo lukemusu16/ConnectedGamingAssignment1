@@ -55,7 +55,7 @@ public class SavingSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        /*if (PlayerPrefs.GetInt("firstLaunch") == 0)
+        if (PlayerPrefs.GetInt("firstLaunch") == 0)
         {
             setPlayerID();
             setPrivacyPolicy();
@@ -64,9 +64,9 @@ public class SavingSystem : MonoBehaviour
         }
 
         GlobalValues.PlayerID = PlayerPrefs.GetString("playerID");
-        LoadManifestItems("gs://emojijunkie-c258a.appspot.com/manifest.xml");*/
+        LoadManifestItems("gs://emojijunkie-c258a.appspot.com/manifest.xml");
 
-        DeletePrefs();
+        //DeletePrefs();
 
     }
 

@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using Firebase.Storage;
-
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -163,13 +164,14 @@ public class FirebaseStorageController : MonoBehaviour
     }
 
 
-    public IEnumerator DownloadContent(string url, DLCType type)
+    public void DownloadContent(string url, DLCType type)
     {
         StorageReference storage = _firebaseStorageInstance.GetReferenceFromUrl(url);
 
         if (type == DLCType.EFFECTS)
         {
-            string localFile = "file://" + Application.streamingAssetsPath + "/bundle.bundle";
+            //string localFile = "file://" + Application.streamingAssetsPath + "/bundle.bundle";
+            string localFile = Application.streamingAssetsPath + "/bundle.bundle";
             storage.GetFileAsync(localFile).ContinueWithOnMainThread(task =>
             {
                 if (!task.IsFaulted && !task.IsCanceled)
@@ -239,13 +241,14 @@ public class FirebaseStorageController : MonoBehaviour
                     tex.LoadImage(fileContents);
 
                     GameObject spritesRoot = GameObject.Find("Main Camera");
+                    GameObject n = new GameObject();
 
                     for (int i = 0; i < 4; i++)
                     {
                         for (int j = 0; j < 4; j++)
                         {
                             Sprite newSprite = Sprite.Create(tex, new Rect(i * 128, j * 128, 128, 128), new Vector2(0.5f, 0.5f));
-                            GameObject n = new GameObject();
+                            
                             SpriteRenderer sr = n.AddComponent<SpriteRenderer>();
                             sr.sprite = newSprite;
                             n.transform.position = new Vector3(i * 2, j * 2, 0);
@@ -255,8 +258,6 @@ public class FirebaseStorageController : MonoBehaviour
                 }
             });
         }
-
-        yield return null;
     }
 
     public void PopulateGameScene()
@@ -265,36 +266,52 @@ public class FirebaseStorageController : MonoBehaviour
         print(colRef);
         colRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
-            print(task);
+            
             QuerySnapshot allAssets = task.Result;
 
             foreach (DocumentSnapshot docSnapshot in allAssets)
             {
-                DocumentReference docRef = docSnapshot.Reference;
+                Dictionary<string, object> assetData = docSnapshot.ToDictionary();
 
-                docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+
+                if (assetData["isPurchase"].ConvertTo<Boolean>())
                 {
-                    Dictionary<string, object> assetData = task.Result.ToDictionary();
-                    object purchased;
+                    print("AUGHHH");
+                    string url;
+                    string dlctypestr;
+                    DLCType dlctype = DLCType.BACKGROUNDS;
 
-                    if (assetData.TryGetValue("AssetID", out purchased) && purchased.Equals(true))
+                    url = assetData["AssetContentURL"].ConvertTo<string>();
+                    dlctypestr = assetData["AssetDLCType"].ConvertTo<string>();
+
+                    print(dlctypestr);
+                    print(url);
+
+                    if (dlctypestr.Equals("Backgrounds"))
                     {
-                        string url;
-                        object content;
-
-                        assetData.TryGetValue("AssetContentUrl", out content);
-
-                        url = content.ToString();
-                        print(url);
-
-                        //DownloadContent
+                        dlctype = DLCType.BACKGROUNDS;
+                    }
+                    else if (dlctypestr.Equals("SkinPacks"))
+                    {
+                        dlctype = DLCType.SKINPACKS;
+                    }
+                    else if (dlctypestr.Equals("Effects"))
+                    {
+                        dlctype = DLCType.EFFECTS;
                     }
                     
 
-                    
-                });
+                    print(dlctype);
+
+                    DownloadContent(url, dlctype);
+                }
             }
         });
 
+    }
+
+    private void OnDestroy()
+    {
+        AssetBundle.UnloadAllAssetBundles(true);
     }
 }
