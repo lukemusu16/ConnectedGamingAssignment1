@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Firebase.Extensions;
 using Firebase.Firestore;
@@ -18,6 +19,9 @@ public class FirebaseStorageController : MonoBehaviour
     private GameObject _thumbnailContainer;
     public List<GameObject> _DLCItemsList;
     public List<AssetData> _assetData;
+
+    const long maxAllowedSize = 1 * 2048 * 2048;
+
     public enum DownloadType
     {
         Thumbnail, Manifest, Item
@@ -48,10 +52,8 @@ public class FirebaseStorageController : MonoBehaviour
 
     private void Start()
     {
-        _thumbnailContainer = GameObject.Find("Content");
         _DLCItemsList = new List<GameObject>();
         _assetData = new List<AssetData>();
-        DLCItemPrefab = Resources.Load<GameObject>("DLCItem");
     }
 
     public void DownloadFileAsync(string url, DownloadType dType)
@@ -75,8 +77,16 @@ public class FirebaseStorageController : MonoBehaviour
                 //Debug.Log($"{imageRef.Name} finished downloading!");
                 if (dType == DownloadType.Thumbnail)
                 {
-                    //Load Image
-                    StartCoroutine(LoadDLCItem(fileContents));
+                    foreach (AssetData item in _assetData)
+                    {
+                        if (string.Equals(imageRef.ToString(), item.ThumbnailUrl))
+                        {
+                            LoadDLCItem(fileContents);
+                        }
+                            
+                    }
+                    
+                    
                 }
                 else if (dType == DownloadType.Manifest)
                 {
@@ -116,10 +126,15 @@ public class FirebaseStorageController : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator LoadDLCItem(byte[] fileContents)
+    public void LoadDLCItem(byte[] fileContents)
     {
+
+        DLCItemPrefab = Resources.Load<GameObject>("DLCItem");
+        _thumbnailContainer = GameObject.Find("Content");
+
         // Display the image inside _imagePlaceholder
         GameObject DLCItem = Instantiate(DLCItemPrefab, _thumbnailContainer.transform.position, Quaternion.identity, _thumbnailContainer.transform);
+        
         DLCItem.name = _assetData[_DLCItemsList.Count].Id.ToString();
         Texture2D tex = new Texture2D(1, 1);
         tex.LoadImage(fileContents);
@@ -129,13 +144,22 @@ public class FirebaseStorageController : MonoBehaviour
 
         DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
         {
-            print(_assetData[int.Parse(DLCItem.name)].IsPurcahsed);
             _assetData[int.Parse(DLCItem.name)].IsPurcahsed = true;
-            print(_assetData[int.Parse(DLCItem.name)].IsPurcahsed);
+            print("we here");
+            DocumentReference docRef = db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets").Document("Asset " + int.Parse(DLCItem.name));
+            Dictionary<string, object> updates = new Dictionary<string, object>
+            {
+                { "isPurchase", _assetData[int.Parse(DLCItem.name)].IsPurcahsed}
+            };
+
+            docRef.UpdateAsync(updates);
+
+
         });
 
         _DLCItemsList.Add(DLCItem);
-        yield return DLCItem;
+        
+        
     }
 
 
@@ -251,19 +275,23 @@ public class FirebaseStorageController : MonoBehaviour
                 docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
                 {
                     Dictionary<string, object> assetData = task.Result.ToDictionary();
+                    object purchased;
 
-                    foreach(KeyValuePair<string, object> assetItem in assetData)
+                    if (assetData.TryGetValue("AssetID", out purchased) && purchased.Equals(true))
                     {
-                        if (assetItem.Value.Equals(true))
-                        {
-                            print("Item Purchased");
+                        string url;
+                        object content;
 
-                        }
-                        else
-                        {
-                            print("aint shit");
-                        }
+                        assetData.TryGetValue("AssetContentUrl", out content);
+
+                        url = content.ToString();
+                        print(url);
+
+                        //DownloadContent
                     }
+                    
+
+                    
                 });
             }
         });

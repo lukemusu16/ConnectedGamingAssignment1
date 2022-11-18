@@ -13,12 +13,8 @@ public class StoreManager : MonoBehaviour
     {
         foreach (AssetData asset in FirebaseStorageController.Instance._assetData)
         {
-            print(asset.ThumbnailUrl);
             FirebaseStorageController.Instance.DownloadFileAsync(asset.ThumbnailUrl, FirebaseStorageController.DownloadType.Thumbnail);
         }
         
     }
-
-
-
 }

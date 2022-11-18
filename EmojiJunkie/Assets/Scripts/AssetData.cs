@@ -53,10 +53,10 @@ public class AssetData
         this.Id = id;
         this.Name = name;
         this.ThumbnailUrl = url;
-        this.ContentUrl = contentUrl;
         this.Price = price;
         this.Currency = currency;
         this.DLCType = dlcType;
+        this.ContentUrl = contentUrl;
         this.IsPurcahsed = isPurchased;
     }
 }
