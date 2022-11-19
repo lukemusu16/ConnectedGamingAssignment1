@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,8 +11,7 @@ using Firebase.Extensions;
 using Firebase.Firestore;
 using Firebase.Storage;
 using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class FirebaseStorageController : MonoBehaviour
 {
@@ -84,10 +85,10 @@ public class FirebaseStorageController : MonoBehaviour
                         {
                             LoadDLCItem(fileContents);
                         }
-                            
+
                     }
-                    
-                    
+
+
                 }
                 else if (dType == DownloadType.Manifest)
                 {
@@ -114,7 +115,7 @@ public class FirebaseStorageController : MonoBehaviour
             string priceStr = elem.Element("price")?.Value;
             string dlcTypeStr = elem.Element("DLCType")?.Value;
             string contentUrlStr = elem.Element("ContentUrl")?.Value;
-            float price = (priceStr != null) ? float.Parse(priceStr) : 0f;
+            int price = (priceStr != null) ? int.Parse(priceStr) : 0;
             AssetData.CURRENNCY currency = AssetData.CURRENNCY.Emojicoins;
             bool isPurchased = false;
 
@@ -135,32 +136,19 @@ public class FirebaseStorageController : MonoBehaviour
 
         // Display the image inside _imagePlaceholder
         GameObject DLCItem = Instantiate(DLCItemPrefab, _thumbnailContainer.transform.position, Quaternion.identity, _thumbnailContainer.transform);
-        
+
         DLCItem.name = _assetData[_DLCItemsList.Count].Id.ToString();
         Texture2D tex = new Texture2D(1, 1);
         tex.LoadImage(fileContents);
         DLCItem.GetComponentInChildren<RawImage>().texture = tex;
-        DLCItem.transform.Find("Price").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Price.ToString();
-        DLCItem.transform.Find("DLCType").GetComponent<TMPro.TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].DLCType.ToString();
+        DLCItem.transform.Find("Price").GetComponent<TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Price.ToString();
+        DLCItem.transform.Find("DLCType").GetComponent<TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Name.ToString();
 
-        DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
-        {
-            _assetData[int.Parse(DLCItem.name)].IsPurcahsed = true;
-            print("we here");
-            DocumentReference docRef = db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets").Document("Asset " + int.Parse(DLCItem.name));
-            Dictionary<string, object> updates = new Dictionary<string, object>
-            {
-                { "isPurchase", _assetData[int.Parse(DLCItem.name)].IsPurcahsed}
-            };
-
-            docRef.UpdateAsync(updates);
-
-
-        });
+        SetButtons(DLCItem);
 
         _DLCItemsList.Add(DLCItem);
-        
-        
+
+
     }
 
 
@@ -171,7 +159,7 @@ public class FirebaseStorageController : MonoBehaviour
         if (type == DLCType.EFFECTS)
         {
             //string localFile = "file://" + Application.streamingAssetsPath + "/bundle.bundle";
-            string localFile = Application.streamingAssetsPath + "/bundle.bundle";
+            string localFile = UnityEngine.Application.streamingAssetsPath + "/bundle.bundle";
             storage.GetFileAsync(localFile).ContinueWithOnMainThread(task =>
             {
                 if (!task.IsFaulted && !task.IsCanceled)
@@ -214,7 +202,8 @@ public class FirebaseStorageController : MonoBehaviour
                     byte[] fileContents = task.Result;
 
                     GameObject backgroundGameObject = new GameObject();
-                    backgroundGameObject.transform.position = Vector2.zero;
+                    backgroundGameObject.transform.position = new Vector3(0, 0, 2);
+                    
                     backgroundGameObject.transform.localScale = new Vector2(picWidth, picHeight);
                     backgroundGameObject.name = "PhoneBackground";
                     backgroundGameObject.AddComponent<SpriteRenderer>();
@@ -242,22 +231,33 @@ public class FirebaseStorageController : MonoBehaviour
 
                     GameObject spritesRoot = GameObject.Find("Main Camera");
                     GameObject n = new GameObject();
+                    SpriteRenderer sr = n.AddComponent<SpriteRenderer>();
+                    StartCoroutine(IterateEmojies(tex, spritesRoot, n, sr));
 
-                    for (int i = 0; i < 4; i++)
-                    {
-                        for (int j = 0; j < 4; j++)
-                        {
-                            Sprite newSprite = Sprite.Create(tex, new Rect(i * 128, j * 128, 128, 128), new Vector2(0.5f, 0.5f));
-                            
-                            SpriteRenderer sr = n.AddComponent<SpriteRenderer>();
-                            sr.sprite = newSprite;
-                            n.transform.position = new Vector3(i * 2, j * 2, 0);
-                            n.transform.parent = spritesRoot.transform;
-                        }
-                    }
                 }
             });
         }
+    }
+
+    public IEnumerator IterateEmojies(Texture2D tex, GameObject spritesRoot, GameObject n, SpriteRenderer sr)
+    {
+        while (true)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+
+                    Sprite newSprite = Sprite.Create(tex, new Rect(i * 128, j * 128, 128, 128), new Vector2(0.5f, 0.5f));
+                    sr.sprite = newSprite;
+                    //n.transform.position = new Vector3(i * 2, j * 2, 0);
+                    n.transform.parent = spritesRoot.transform;
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+        }
+        
+        
     }
 
     public void PopulateGameScene()
@@ -274,7 +274,7 @@ public class FirebaseStorageController : MonoBehaviour
                 Dictionary<string, object> assetData = docSnapshot.ToDictionary();
 
 
-                if (assetData["isPurchase"].ConvertTo<Boolean>())
+                if (assetData["isPurchase"].ConvertTo<bool>())
                 {
                     print("AUGHHH");
                     string url;
@@ -310,8 +310,123 @@ public class FirebaseStorageController : MonoBehaviour
 
     }
 
+    public void SetButtons(GameObject DLCItem)
+    {
+        GameObject.Find("Balance").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("Balance").ToString();
+        DocumentReference docRef = db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets").Document("Asset "+DLCItem.name);
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            DocumentSnapshot snapshot = task.Result;
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> asset = snapshot.ToDictionary();
+                int price = int.Parse(asset["AssetPrice"].ToString());
+
+
+                if (asset.ContainsValue(true))
+                {
+                    DLCItem.transform.Find("Button").GetComponent<Button>().interactable = false;
+
+                    ColorBlock colors = DLCItem.transform.Find("Button").GetComponent<Button>().colors;
+                    colors.normalColor = Color.gray;
+                    DLCItem.transform.Find("Button").GetComponent<Button>().colors = colors;
+
+                    DLCItem.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().text = "Owned";
+
+                }
+                else if (PlayerPrefs.GetInt("Balance") < price)
+                {
+                    DLCItem.transform.Find("Button").GetComponent<Button>().interactable = false;
+
+                    ColorBlock colors = DLCItem.transform.Find("Button").GetComponent<Button>().colors;
+                    colors.normalColor = new Color(0.5f,0,0,1);
+                    DLCItem.transform.Find("Button").GetComponent<Button>().colors = colors;
+                    DLCItem.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().fontSize = 20;
+                    DLCItem.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().text = "Insufficient Funds";
+                    DLCItem.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+                }
+                else
+                {
+                    DLCItem.transform.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        int balance = PlayerPrefs.GetInt("Balance");
+
+                        if (balance >= _assetData[int.Parse(DLCItem.name)].Price)
+                        {
+
+                            _assetData[int.Parse(DLCItem.name)].IsPurcahsed = true;
+                            print("we here");
+                            DocumentReference docRef = db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets").Document("Asset " + int.Parse(DLCItem.name));
+                            Dictionary<string, object> updates = new Dictionary<string, object>
+                            {
+                                { "isPurchase", _assetData[int.Parse(DLCItem.name)].IsPurcahsed}
+                            };
+
+                            docRef.UpdateAsync(updates);
+
+                            DLCItem.transform.Find("Button").GetComponent<Button>().interactable = false;
+
+
+                            balance = balance - _assetData[int.Parse(DLCItem.name)].Price;
+                            PlayerPrefs.SetInt("Balance", balance);
+                            GameObject.Find("Balance").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("Balance").ToString();
+
+                            ColorBlock colors = DLCItem.transform.Find("Button").GetComponent<Button>().colors;
+                            colors.normalColor = Color.gray;
+                            DLCItem.transform.Find("Button").GetComponent<Button>().colors = colors;
+
+                            DLCItem.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().text = "Owned";
+                            DatabaseManager dm = new DatabaseManager();
+                            dm.TrackClicks("purchase", DLCItem);
+                            UpdateButtons();
+                        }
+
+                    });
+                }
+                
+            }
+            else
+            {
+                Debug.Log(String.Format("Document {0} does not exist!", snapshot.Id));
+            }
+        });
+    }
+
+    private void UpdateButtons()
+    {
+        int children = GameObject.Find("Content").transform.childCount;
+
+        for (int i = 0; i < children; i++)
+        {
+            GameObject item = GameObject.Find(i.ToString());
+
+            if (_assetData[i].IsPurcahsed)
+            {
+                item.transform.Find("Button").GetComponent<Button>().interactable = false;
+
+                ColorBlock colors = item.transform.Find("Button").GetComponent<Button>().colors;
+                colors.normalColor = Color.gray;
+                item.transform.Find("Button").GetComponent<Button>().colors = colors;
+
+                item.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().text = "Owned";
+            }
+            else if (PlayerPrefs.GetInt("Balance") < _assetData[i].Price)
+            {
+                item.transform.Find("Button").GetComponent<Button>().interactable = false;
+
+                ColorBlock colors = item.transform.Find("Button").GetComponent<Button>().colors;
+                colors.normalColor = new Color(0.5f, 0, 0, 1);
+                item.transform.Find("Button").GetComponent<Button>().colors = colors;
+                item.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().fontSize = 20;
+                item.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().text = "Insufficient Funds";
+                item.transform.Find("Button").GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+            }
+        }
+    }
+
     private void OnDestroy()
     {
         AssetBundle.UnloadAllAssetBundles(true);
+        StopAllCoroutines();
     }
 }

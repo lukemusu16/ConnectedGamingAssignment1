@@ -15,14 +15,14 @@ public class AssetData
     private string _DLCType;
     private string _thumbnailUrl;
     private string _contentUrl;
-    private float _price;
+    private int _price;
     private CURRENNCY _currency;
     private bool _isPurcahsed;
 
     public virtual CURRENNCY Currency
     { get { return _currency; } set { _currency = value; } }
 
-    public virtual float Price
+    public virtual int Price
     { get { return _price; } set { _price = value; } }
 
     public virtual string ThumbnailUrl
@@ -48,7 +48,7 @@ public class AssetData
         return ($"The asset has the following values: ID:{Id}, NAME:{Name}, URL:{ThumbnailUrl}, PRICE:{Price}, CURRENCY:{Currency.ToString()}, isPurchased:{IsPurcahsed}");
     }
 
-    public AssetData(int id, string name, string url, float price, CURRENNCY currency, string dlcType, string contentUrl, bool isPurchased)
+    public AssetData(int id, string name, string url, int price, CURRENNCY currency, string dlcType, string contentUrl, bool isPurchased)
     {
         this.Id = id;
         this.Name = name;

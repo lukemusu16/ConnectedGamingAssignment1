@@ -13,10 +13,14 @@ public class ButtonController : MonoBehaviour
     public void GoToGame()
     {
         SceneManager.LoadScene("Game_Scene");
+        DatabaseManager dm = new DatabaseManager();
+        dm.TrackClicks("game");
     }
 
     public void GoToStore()
     {
         SceneManager.LoadScene("Store_Scene");
+        DatabaseManager dm = new DatabaseManager();
+        dm.TrackClicks("store");
     }
 }

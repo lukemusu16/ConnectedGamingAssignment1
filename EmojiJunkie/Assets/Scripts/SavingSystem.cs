@@ -59,6 +59,8 @@ public class SavingSystem : MonoBehaviour
         {
             setPlayerID();
             setPrivacyPolicy();
+            setBalance();
+            setClicks();
 
             PlayerPrefs.Save();
         }
@@ -156,9 +158,51 @@ public class SavingSystem : MonoBehaviour
         }
     }
 
+    void setBalance()
+    {
+        if (PlayerPrefs.HasKey("Balance"))
+        {
+            print(PlayerPrefs.GetInt("Balance"));
+        }
+        else
+        {
+            PlayerPrefs.SetInt("Balance", 1000);
+        }
+    }
+
     void setPrivacyPolicy()
     {
         print("showing privacy Policy");
+    }
+
+    void setClicks()
+    {
+        if (PlayerPrefs.HasKey("storeClicks"))
+        {
+            print(PlayerPrefs.GetInt("storeClicks"));
+        }
+        else
+        {
+            PlayerPrefs.SetInt("storeClicks", 0);
+        }
+
+        if (PlayerPrefs.HasKey("gameClicks"))
+        {
+            print(PlayerPrefs.GetInt("gameClicks"));
+        }
+        else
+        {
+            PlayerPrefs.SetInt("gameClicks", 0);
+        }
+
+        if (PlayerPrefs.HasKey("purchaseClicks"))
+        {
+            print(PlayerPrefs.GetInt("purchaseClicks"));
+        }
+        else
+        {
+            PlayerPrefs.SetInt("purchaseClicks", 0);
+        }
     }
 
     public void LoadManifestItems(string url)
@@ -193,7 +237,7 @@ public class SavingSystem : MonoBehaviour
                         string priceStr = elem.Element("price")?.Value;
                         string dlcTypeStr = elem.Element("DLCType")?.Value;
                         string contentUrl = elem.Element("contentUrl")?.Value;
-                        float price = (priceStr != null) ? float.Parse(priceStr) : 0f;
+                        int price = (priceStr != null) ? int.Parse(priceStr) : 0;
                         AssetData.CURRENNCY currency = AssetData.CURRENNCY.Emojicoins;
                         bool isPurchased = false;
 
