@@ -64,10 +64,18 @@ public class SavingSystem : MonoBehaviour
 
             PlayerPrefs.Save();
         }
+        else
+        {
+            Destroy(GameObject.Find("Canvas").transform.Find("Privacy").gameObject);
+        }
 
         GlobalValues.PlayerID = PlayerPrefs.GetString("playerID");
         LoadManifestItems("gs://emojijunkie-c258a.appspot.com/manifest.xml");
 
+        ///
+        /// Testing Functions
+        ///
+        //setPlayerIDManual("WEJI1835fcxv");
         //DeletePrefs();
 
     }
@@ -157,6 +165,17 @@ public class SavingSystem : MonoBehaviour
             PlayerPrefs.SetString("playerID", InterpretRegex("[A-Z]{4}[0-9]{4}[a-z]{4}"));
         }
     }
+    void setPlayerIDManual(string playerID)
+    {
+        if (PlayerPrefs.HasKey("playerID"))
+        {
+            PlayerPrefs.SetString("playerID", playerID);
+        }
+        else
+        {
+            PlayerPrefs.SetString("playerID", playerID);
+        }
+    }
 
     void setBalance()
     {
@@ -172,7 +191,7 @@ public class SavingSystem : MonoBehaviour
 
     void setPrivacyPolicy()
     {
-        print("showing privacy Policy");
+        GameObject.Find("Canvas").transform.Find("Privacy").gameObject.SetActive(true);
     }
 
     void setClicks()

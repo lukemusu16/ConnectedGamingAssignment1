@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "733933469813",
+    "firebase_url": "https://emojijunkie-c258a-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "emojijunkie-c258a",
+    "storage_bucket": "emojijunkie-c258a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733933469813:android:c09cabdba33ed2cd43b83c",
+        "android_client_info": {
+          "package_name": "Emoji.Junkie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "733933469813-3644cl9g5f8b18qqs8tus3118f707eks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh0rAomPD23uTA6l64fpMCPz1lfjPfxSI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "733933469813-3644cl9g5f8b18qqs8tus3118f707eks.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

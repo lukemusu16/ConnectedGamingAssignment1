@@ -23,4 +23,16 @@ public class ButtonController : MonoBehaviour
         DatabaseManager dm = new DatabaseManager();
         dm.TrackClicks("store");
     }
+
+    public void ClosePrivacyPolicy()
+    {
+        GameObject pp = GameObject.Find("Canvas").transform.Find("Privacy").gameObject;
+        pp.SetActive(false);
+        Destroy(pp);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }

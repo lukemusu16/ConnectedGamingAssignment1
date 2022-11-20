@@ -202,16 +202,31 @@ public class FirebaseStorageController : MonoBehaviour
                     byte[] fileContents = task.Result;
 
                     GameObject backgroundGameObject = new GameObject();
+                    
                     backgroundGameObject.transform.position = new Vector3(0, 0, 2);
                     
                     backgroundGameObject.transform.localScale = new Vector2(picWidth, picHeight);
                     backgroundGameObject.name = "PhoneBackground";
+                    backgroundGameObject.tag = "BG";
                     backgroundGameObject.AddComponent<SpriteRenderer>();
                     Texture2D tex = new Texture2D(1, 1);
                     tex.LoadImage(fileContents);
                     backgroundGameObject.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(picHeight / 2, picHeight / 2));
+
+                    print(GameObject.FindGameObjectsWithTag("BG"));
+                    if (GameObject.FindGameObjectsWithTag("BG").Length > 1)
+                    {
+                        print("HUH");
+                        GameObject[] bgs = GameObject.FindGameObjectsWithTag("BG");
+                        bgs[0].SetActive(true);
+                        bgs[1].SetActive(false);
+                        print("pre-ye");
+                        StartCoroutine(alternateBackgrounds(bgs));
+                    }
                 }
             });
+
+              
         }
         else if (type == DLCType.SKINPACKS)
         {
@@ -239,6 +254,24 @@ public class FirebaseStorageController : MonoBehaviour
         }
     }
 
+    IEnumerator alternateBackgrounds(GameObject[] bgs)
+    {
+        print("ye");
+        foreach (GameObject bg in bgs)
+        {
+            if (bg.active)
+            {
+                bg.SetActive(false);
+            }
+            else
+            {
+                bg.SetActive(true);
+            }
+        }
+        yield return new WaitForSeconds(1);
+        StartCoroutine(alternateBackgrounds(bgs));
+    }
+
     public IEnumerator IterateEmojies(Texture2D tex, GameObject spritesRoot, GameObject n, SpriteRenderer sr)
     {
         while (true)
@@ -263,7 +296,7 @@ public class FirebaseStorageController : MonoBehaviour
     public void PopulateGameScene()
     {
         Query colRef= db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets");
-        print(colRef);
+        
         colRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
             
@@ -276,16 +309,12 @@ public class FirebaseStorageController : MonoBehaviour
 
                 if (assetData["isPurchase"].ConvertTo<bool>())
                 {
-                    print("AUGHHH");
                     string url;
                     string dlctypestr;
                     DLCType dlctype = DLCType.BACKGROUNDS;
 
                     url = assetData["AssetContentURL"].ConvertTo<string>();
                     dlctypestr = assetData["AssetDLCType"].ConvertTo<string>();
-
-                    print(dlctypestr);
-                    print(url);
 
                     if (dlctypestr.Equals("Backgrounds"))
                     {
@@ -300,8 +329,6 @@ public class FirebaseStorageController : MonoBehaviour
                         dlctype = DLCType.EFFECTS;
                     }
                     
-
-                    print(dlctype);
 
                     DownloadContent(url, dlctype);
                 }
