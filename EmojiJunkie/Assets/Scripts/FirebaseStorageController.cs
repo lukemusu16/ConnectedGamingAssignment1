@@ -15,6 +15,8 @@ using TMPro;
 using System.Net.Http;
 using System.ComponentModel;
 using System.Security.Cryptography;
+using UnityEditor.VersionControl;
+using static UnityEditor.Progress;
 
 public class FirebaseStorageController : MonoBehaviour
 {
@@ -24,8 +26,6 @@ public class FirebaseStorageController : MonoBehaviour
     private GameObject _thumbnailContainer;
     public List<GameObject> _DLCItemsList;
     public List<AssetData> _assetData;
-
-    byte[] bruh;
 
     const long maxAllowedSize = 1 * 2048 * 2048;
 
@@ -63,30 +63,7 @@ public class FirebaseStorageController : MonoBehaviour
         _assetData = new List<AssetData>();
     }
 
-    public async Task<byte[]> DownloadFile(string url)
-    {
-        StorageReference imageRef =
-            _firebaseStorageInstance.GetReferenceFromUrl(url);
-
-        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-        const long maxAllowedSize = 1 * 2048 * 2048;
-        await imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                Debug.Log("Bytes not fonud");
-            }
-            else
-            {
-                bruh = task.Result;
-            }
-        });
-
-        return bruh;
-        
-    }
-
-    public void DownloadFileAsync(string url, DownloadType dType)
+    public async void DownloadFileAsync(string url, DownloadType dType)
     {
         // Create a storage reference from our storage service
         StorageReference imageRef =
@@ -94,7 +71,7 @@ public class FirebaseStorageController : MonoBehaviour
 
         // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
         const long maxAllowedSize = 1 * 2048 * 2048;
-        imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+        await imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
         {
             if (task.IsFaulted || task.IsCanceled)
             {
@@ -107,16 +84,7 @@ public class FirebaseStorageController : MonoBehaviour
                 //Debug.Log($"{imageRef.Name} finished downloading!");
                 if (dType == DownloadType.Thumbnail)
                 {
-                    foreach (AssetData item in _assetData)
-                    {
-                        if (string.Equals(imageRef.ToString(), item.ThumbnailUrl))
-                        {
-                            LoadDLCItem(fileContents);
-                        }
-
-                    }
-
-
+                    LoadDLCItem(fileContents);
                 }
                 else if (dType == DownloadType.Manifest)
                 {
@@ -149,8 +117,8 @@ public class FirebaseStorageController : MonoBehaviour
 
             AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr, isPurchased);
             _assetData.Add(newAsset);
-
             DownloadFileAsync(newAsset.ThumbnailUrl, DownloadType.Thumbnail);
+
         }
 
         yield return null;
@@ -176,11 +144,10 @@ public class FirebaseStorageController : MonoBehaviour
 
         _DLCItemsList.Add(DLCItem);
 
-
     }
 
 
-    public void DownloadContent(string url, DLCType type)
+    public async void DownloadContent(string url, DLCType type)
     {
         StorageReference storage = _firebaseStorageInstance.GetReferenceFromUrl(url);
 
@@ -188,7 +155,7 @@ public class FirebaseStorageController : MonoBehaviour
         {
             //string localFile = "file://" + Application.streamingAssetsPath + "/bundle.bundle";
             string localFile = UnityEngine.Application.streamingAssetsPath + "/bundle.bundle";
-            storage.GetFileAsync(localFile).ContinueWithOnMainThread(task =>
+            await storage.GetFileAsync(localFile).ContinueWithOnMainThread(task =>
             {
                 if (!task.IsFaulted && !task.IsCanceled)
                 {
@@ -218,7 +185,7 @@ public class FirebaseStorageController : MonoBehaviour
             float picWidth = Camera.main.pixelWidth * Camera.main.orthographicSize / (Camera.main.orthographicSize * 875);
             float picHeight = Camera.main.pixelHeight * Camera.main.orthographicSize / (Camera.main.orthographicSize * 875);
 
-            storage.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+            await storage.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
@@ -259,7 +226,7 @@ public class FirebaseStorageController : MonoBehaviour
         else if (type == DLCType.SKINPACKS)
         {
             const long maxAllowedSize = 1 * 2048 * 2048;
-            storage.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+            await storage.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {

@@ -224,7 +224,7 @@ public class SavingSystem : MonoBehaviour
         }
     }
 
-    public void LoadManifestItems(string url)
+    public async void LoadManifestItems(string url)
     {
         if (PlayerPrefs.GetInt("firstLaunch") == 0)
         {
@@ -234,7 +234,7 @@ public class SavingSystem : MonoBehaviour
 
             // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
             const long maxAllowedSize = 1 * 2048 * 2048;
-            imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+            await imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
@@ -289,7 +289,7 @@ public class SavingSystem : MonoBehaviour
         {
             Query colRef = db.Collection("playerData").Document(GlobalValues.PlayerID).Collection("Assets");
             print(colRef);
-            colRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+            await colRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
             {
 
                 QuerySnapshot allAssets = task.Result;
