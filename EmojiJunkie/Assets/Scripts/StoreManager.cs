@@ -17,7 +17,7 @@ public class StoreManager : MonoBehaviour
         GameObject.Find("Balance").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("Balance").ToString();
         foreach (AssetData asset in FirebaseStorageController.Instance._assetData)
         {
-            FirebaseStorageController.Instance.DownloadFileAsync(asset.ThumbnailUrl, FirebaseStorageController.DownloadType.Thumbnail);
+            FirebaseStorageController.Instance.DownloadFileAsync(asset, FirebaseStorageController.DownloadType.Thumbnail);
         }
         
     }

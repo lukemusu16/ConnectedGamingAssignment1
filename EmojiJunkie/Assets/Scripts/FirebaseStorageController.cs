@@ -15,8 +15,6 @@ using TMPro;
 using System.Net.Http;
 using System.ComponentModel;
 using System.Security.Cryptography;
-using UnityEditor.VersionControl;
-using static UnityEditor.Progress;
 
 public class FirebaseStorageController : MonoBehaviour
 {
@@ -63,11 +61,11 @@ public class FirebaseStorageController : MonoBehaviour
         _assetData = new List<AssetData>();
     }
 
-    public async void DownloadFileAsync(string url, DownloadType dType)
+    public async void DownloadFileAsync(AssetData asset, DownloadType dType)
     {
         // Create a storage reference from our storage service
         StorageReference imageRef =
-            _firebaseStorageInstance.GetReferenceFromUrl(url);
+            _firebaseStorageInstance.GetReferenceFromUrl(asset.ThumbnailUrl);
 
         // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
         const long maxAllowedSize = 1 * 2048 * 2048;
@@ -84,7 +82,8 @@ public class FirebaseStorageController : MonoBehaviour
                 //Debug.Log($"{imageRef.Name} finished downloading!");
                 if (dType == DownloadType.Thumbnail)
                 {
-                    LoadDLCItem(fileContents);
+                    if(string.Equals(imageRef.ToString(), asset.ThumbnailUrl))
+                        LoadDLCItem(asset, fileContents);
                 }
                 else if (dType == DownloadType.Manifest)
                 {
@@ -117,14 +116,14 @@ public class FirebaseStorageController : MonoBehaviour
 
             AssetData newAsset = new AssetData(id, nameStr, urlStr, price, currency, dlcTypeStr, contentUrlStr, isPurchased);
             _assetData.Add(newAsset);
-            DownloadFileAsync(newAsset.ThumbnailUrl, DownloadType.Thumbnail);
+            DownloadFileAsync(newAsset, DownloadType.Thumbnail);
 
         }
 
         yield return null;
     }
 
-    public void LoadDLCItem(byte[] fileContents)
+    public void LoadDLCItem(AssetData asset, byte[] fileContents)
     {
 
         DLCItemPrefab = Resources.Load<GameObject>("DLCItem");
@@ -133,12 +132,12 @@ public class FirebaseStorageController : MonoBehaviour
         // Display the image inside _imagePlaceholder
         GameObject DLCItem = Instantiate(DLCItemPrefab, _thumbnailContainer.transform.position, Quaternion.identity, _thumbnailContainer.transform);
 
-        DLCItem.name = _assetData[_DLCItemsList.Count].Id.ToString();
+        DLCItem.name = asset.Id.ToString();
         Texture2D tex = new Texture2D(1, 1);
         tex.LoadImage(fileContents);
         DLCItem.GetComponentInChildren<RawImage>().texture = tex;
-        DLCItem.transform.Find("Price").GetComponent<TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Price.ToString();
-        DLCItem.transform.Find("DLCType").GetComponent<TextMeshProUGUI>().text = _assetData[_DLCItemsList.Count].Name.ToString();
+        DLCItem.transform.Find("Price").GetComponent<TextMeshProUGUI>().text = asset.Price.ToString();
+        DLCItem.transform.Find("DLCType").GetComponent<TextMeshProUGUI>().text = asset.Name.ToString();
 
         SetButtons(DLCItem);
 
@@ -251,7 +250,6 @@ public class FirebaseStorageController : MonoBehaviour
 
     IEnumerator alternateBackgrounds(GameObject[] bgs)
     {
-        print("ye");
         foreach (GameObject bg in bgs)
         {
             if (bg.active)
