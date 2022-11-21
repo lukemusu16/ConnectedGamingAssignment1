@@ -12,6 +12,9 @@ using Firebase.Firestore;
 using Firebase.Storage;
 using Unity.VisualScripting;
 using TMPro;
+using System.Net.Http;
+using System.ComponentModel;
+using System.Security.Cryptography;
 
 public class FirebaseStorageController : MonoBehaviour
 {
@@ -21,6 +24,8 @@ public class FirebaseStorageController : MonoBehaviour
     private GameObject _thumbnailContainer;
     public List<GameObject> _DLCItemsList;
     public List<AssetData> _assetData;
+
+    byte[] bruh;
 
     const long maxAllowedSize = 1 * 2048 * 2048;
 
@@ -56,6 +61,29 @@ public class FirebaseStorageController : MonoBehaviour
     {
         _DLCItemsList = new List<GameObject>();
         _assetData = new List<AssetData>();
+    }
+
+    public async Task<byte[]> DownloadFile(string url)
+    {
+        StorageReference imageRef =
+            _firebaseStorageInstance.GetReferenceFromUrl(url);
+
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        const long maxAllowedSize = 1 * 2048 * 2048;
+        await imageRef.GetBytesAsync(maxAllowedSize).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.Log("Bytes not fonud");
+            }
+            else
+            {
+                bruh = task.Result;
+            }
+        });
+
+        return bruh;
+        
     }
 
     public void DownloadFileAsync(string url, DownloadType dType)
